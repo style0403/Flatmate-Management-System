@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using WebApiBackend.Dto;
 using WebApiBackend.Model;
 
@@ -18,6 +17,8 @@ namespace WebApiBackend.Mappings
             CreateMap<UserDTO, User>();
             CreateMap<Schedule, ScheduleDTO>();
             CreateMap<ScheduleDTO, Schedule>();
+            CreateMap<Chores, ChoresDTO>();
+            CreateMap<ChoresDTO, Chores>();
         }
     }
 }
