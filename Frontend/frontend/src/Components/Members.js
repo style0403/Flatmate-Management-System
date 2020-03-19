@@ -1,86 +1,62 @@
-import React, {Component} from 'react';
-import '../App.css';
+import React from 'react';
+import APIRequest from '../Util/APIRequest';
 import './Members.css';
-export default class MembersPage extends Component {
+import AddMember from './AddMember';
+import MemberTile from './MemberTile';
+import NewFlat from './NewFlat'
 
-    constructor(props){
-        super(props)
-        this.state ={
-            userName: "",
-            userNameError: ""
+export default class MembersPage extends React.Component {
+    constructor(props) {
+        super(props);
+
+
+        this.state = {
+            items: [],
+            isLoaded: false,
         }
+        this.getMember();
+        this.setFlatState = this.setFlatState.bind(this);
+    }
+    /* Function used to fetch JSON data from the API */
+    async getMember() {
+        const memberResult = await APIRequest.getFlatMembers()
+        const json = await memberResult.json();
+        this.setState({
+            isLoaded: true,
+            items: json
+        })
 
     }
 
-    change = e => {
-        // this.props.onChange({ [e.target.name]: e.target.value });
+    setFlatState(json) {
         this.setState({
-          [e.target.name]: e.target.value
-        });
-        console.log(e.target.value)
-      };
-    
-      validate = () => {
-        let isError = false;
-        const errors = {
-          userNameError: "",
-        };
-    
-        if (this.state.userName !== "BeboBryan") {
-          isError = true;
-          errors.userNameError = "Username does not match to the system";
-        }
-        
-        this.setState({
-          ...this.state,
-          ...errors
-        });
-        return isError;
-      };
-    
-      onSubmit = e => {
-        e.preventDefault();
-        const err = this.validate();
-        if (!err) {
-          //this.props.onSubmit(this.state);
-          // clear form
-          this.setState({
-            userName: "",
-            userNameError: "",
-          });
-        }
-      };
-    
-    addUser(e){
-        e.preventDefault();
-        this.setState({
-            [e.target.name]: e.target.value
-        });
-        console.log(e.target.value)
+            items: json
+        })
     }
 
+    render() {
+        var { isLoaded, items } = this.state;
 
-    
-    render () {
-        return (
-        <div>
-            <div className='section-header'>
-                Members page
-            </div>
-                <form>    
-                <div>        
-                <input type = 'text' name = 'userName' onChange={e => this.change(e)}
-                 className = 'Usernamebox' placeholder='Enter Username'/>
-                 <p></p>
-                 <p className = 'error'>{this.state.userNameError}</p>
-                </div>
-                <button type = 'submit' className = "button" onClick = { (e) => {this.onSubmit(e)}} >Add</button>
-                </form> 
-            <div>
-            <h4 className = 'currentMember'>Current Members</h4></div>
-                <div>
-                </div>
-            </div>
-        )
+        if (!isLoaded) {
+            return (<div>Loading...</div>);
+        }
+        else{
+            return (
+                <div className = "MembersPage">
+                        {/* If flatMembers array contains anything, the member is part of a flat, and so display member tiles. */}
+                        {items.flatMembers.length === 0 ? <NewFlat setFlatState={this.setFlatState} /> :
+                            <div >
+                                <div className='section-header'>Members page</div>
+                                <AddMember />
+                                <h4 className='currentMember'>Current Members</h4>
+                                {this.state.items.flatMembers.map(function (flatMember, i) {
+                                    return <MemberTile key={i} flatMember={flatMember} />
+                                })}
+                            </div>
+
+
+                        }
+                </div>);
+        }
     }
 }
