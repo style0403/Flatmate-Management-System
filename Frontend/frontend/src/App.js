@@ -59,6 +59,9 @@ export default class App extends React.Component {
                 <Route path="/app/members">
                   <MembersPage/>
                 </Route>
+                <Route path="/app/newFlat">
+                  <NewFlat />
+                </Route>
                 <Route path="/app/">
                   <Home/>
                 </Route>
@@ -75,4 +78,3 @@ export default class App extends React.Component {
 function Home() {
   return <div class='section-header'>Flat Management System</div>;
 }
-
